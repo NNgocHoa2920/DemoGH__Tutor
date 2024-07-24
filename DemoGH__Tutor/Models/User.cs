@@ -6,6 +6,6 @@
         public  string Name { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
-        public virtual GioHang GioHang { get; set; }
+        public virtual GioHang? GioHang { get; set; }   // tạo ra khóa ngoại
     }
 }
