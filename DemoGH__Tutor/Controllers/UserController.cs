@@ -151,6 +151,7 @@ namespace DemoGH__Tutor.Controllers
             //lấy ra đối tượng mà muốn xóa
             var deleteUser = _db.Users.Find(id);
             
+            //khi các bạn muốn làm roll back hoặc xem lại giữ liệu đã xóa thì các bạn mới làm đoạn này
             //ép kiểu sang Json để tí nữa xem lại dữ liệu đã xóa và muốn hiển thị ở dạng JSON
             var jsonData = JsonConvert.SerializeObject(deleteUser);
             HttpContext.Session.SetString("deleted", jsonData);// luu giữ lựu đã xóa vào sesion
@@ -176,6 +177,30 @@ namespace DemoGH__Tutor.Controllers
                 // Xử lý khi không tìm thấy dữ liệu trong session
                 return RedirectToAction("Index");
             }
+        }
+
+        //KHÔI PHỤC LẠI DỮ LIỆU ĐÃ XÓA/ HOẶC SỬA ( LÀM TƯƠNG TỰ)
+        public IActionResult RollBack()
+        {
+            //check xem dữ lieeju đã xóa đã đc lưu vào session hay chưa
+            if (HttpContext.Session.Keys.Contains("deleted"))
+            {
+                //lấy giữ lựu đã lưu vào session ra
+                var jSonData = HttpContext.Session.GetString("deleted");
+
+                //tạo 1 đối tượng có dữ liệu y hệt dữ liệu cũ
+                var deletedUsser = JsonConvert.DeserializeObject<User>(jSonData);
+                _db.Users.Add(deletedUsser);  //add lại vào trong db
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+
+
+            }
+            else
+            {
+                return Content("chưa lưu vào session được xóa");
+            }
+             
         }
 
 
